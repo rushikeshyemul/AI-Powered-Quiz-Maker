@@ -1,4 +1,4 @@
-# Quiz App
+# Quiz Web App
 
 ## Backend Setup (Node.js/Express/MongoDB)
 
