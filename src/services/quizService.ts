@@ -1,13 +1,18 @@
-import { Quiz, Question, QuizConfig } from '../types';
+import { Quiz, Question, QuizConfig, QuizAttempt, UserStats } from '../types';
 import Together from "together-ai";
 
 const TOGETHER_API_KEY = import.meta.env.VITE_TOGETHER_API_KEY;
 
-const together = new Together({ apiKey: TOGETHER_API_KEY });
+// Only create Together instance if API key is available
+const together = TOGETHER_API_KEY && TOGETHER_API_KEY !== 'your_together_api_key_here' 
+  ? new Together({ apiKey: TOGETHER_API_KEY })
+  : null;
+
+const API_URL = "http://localhost:5000/api";
 
 export const quizService = {
   async generateQuiz(config: QuizConfig): Promise<Quiz> {
-    if (!TOGETHER_API_KEY || TOGETHER_API_KEY === 'your_together_api_key_here') {
+    if (!together || !TOGETHER_API_KEY || TOGETHER_API_KEY === 'your_together_api_key_here') {
       // Fallback to mock data if no API key is provided
       return this.generateMockQuiz(config);
     }
@@ -26,7 +31,7 @@ export const quizService = {
             content: prompt
           }
         ],
-        model: "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model: "meta-llama/Llama-Vision-Free",
         temperature: 0.7,
         max_tokens: 2000
       });
@@ -264,5 +269,77 @@ Note: correctAnswer should be the index (0-3) of the correct option in the optio
       'Science',
       'History',
     ];
+  },
+
+  // New methods for quiz attempts and user statistics
+  async saveQuizAttempt(attemptData: {
+    quizId: string;
+    topic: string;
+    answers: number[];
+    score: number;
+    totalQuestions: number;
+    timeTaken: number;
+    difficulty: 'easy' | 'medium' | 'hard';
+  }): Promise<QuizAttempt> {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await fetch(`${API_URL}/quiz/attempt`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(attemptData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to save quiz attempt');
+    }
+
+    return response.json();
+  },
+
+  async getUserQuizAttempts(): Promise<QuizAttempt[]> {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await fetch(`${API_URL}/quiz/attempts`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch quiz attempts');
+    }
+
+    return response.json();
+  },
+
+  async getUserStats(): Promise<UserStats> {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await fetch(`${API_URL}/quiz/stats`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch user statistics');
+    }
+
+    return response.json();
   },
 };

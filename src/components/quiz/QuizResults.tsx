@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Quiz } from '../../types';
+import { quizService } from '../../services/quizService';
 import { 
   Trophy, 
   Clock, 
@@ -16,6 +17,7 @@ import {
 export const QuizResults: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
 
   const {
     quiz,
@@ -24,6 +26,7 @@ export const QuizResults: React.FC = () => {
     totalQuestions,
     timeTaken,
     autoSubmitted,
+    difficulty = 'medium',
   } = location.state as {
     quiz: Quiz;
     answers: number[];
@@ -31,7 +34,32 @@ export const QuizResults: React.FC = () => {
     totalQuestions: number;
     timeTaken: number;
     autoSubmitted?: boolean;
+    difficulty?: 'easy' | 'medium' | 'hard';
   };
+
+  useEffect(() => {
+    const saveQuizAttempt = async () => {
+      try {
+        setSaving(true);
+        await quizService.saveQuizAttempt({
+          quizId: quiz.id,
+          topic: quiz.topic,
+          answers,
+          score,
+          totalQuestions,
+          timeTaken,
+          difficulty,
+        });
+      } catch (error) {
+        console.error('Failed to save quiz attempt:', error);
+        // Don't show error to user as this is background operation
+      } finally {
+        setSaving(false);
+      }
+    };
+
+    saveQuizAttempt();
+  }, [quiz.id, quiz.topic, answers, score, totalQuestions, timeTaken, difficulty]);
 
   const percentage = Math.round((score / totalQuestions) * 100);
   const formatTime = (seconds: number) => {
@@ -69,6 +97,11 @@ export const QuizResults: React.FC = () => {
         <p className="text-gray-600 mt-2">
           Here are your results for {quiz.topic}
         </p>
+        {saving && (
+          <p className="text-blue-600 mt-2 text-sm">
+            📊 Saving your results...
+          </p>
+        )}
       </div>
 
       {/* Score Summary */}

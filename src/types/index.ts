@@ -25,11 +25,22 @@ export interface QuizAttempt {
   id: string;
   userId: string;
   quizId: string;
+  topic: string;
   answers: number[];
   score: number;
   totalQuestions: number;
   completedAt: string;
   timeTaken: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+export interface UserStats {
+  totalAttempts: number;
+  averageScore: string;
+  totalQuestions: number;
+  totalTime: number;
+  topics: string[];
+  recentAttempts: QuizAttempt[];
 }
 
 export interface QuizConfig {

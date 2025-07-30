@@ -91,6 +91,7 @@ export const QuizInterface: React.FC = () => {
         totalQuestions: quiz.questions.length,
         timeTaken,
         autoSubmitted: true,
+        difficulty: config.difficulty,
       },
     });
   };
@@ -114,6 +115,7 @@ export const QuizInterface: React.FC = () => {
         totalQuestions: quiz.questions.length,
         timeTaken,
         autoSubmitted: false,
+        difficulty: config.difficulty,
       },
     });
   };
