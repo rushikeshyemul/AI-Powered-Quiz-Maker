@@ -18,6 +18,7 @@ export const QuizInterface: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const config: QuizConfig = location.state?.config;
+  const existingQuiz: Quiz | null = location.state?.quiz || null;
 
   useEffect(() => {
     if (!config) {
@@ -27,10 +28,26 @@ export const QuizInterface: React.FC = () => {
 
     const loadQuiz = async () => {
       try {
-        const quizData = await quizService.generateQuiz(config);
-        setQuiz(quizData);
-        setTimeLeft(config.timeLimit * 60); // Convert to seconds
-        setAnswers(new Array(quizData.questions.length).fill(-1));
+        if (existingQuiz) {
+          // Quiz already provided (e.g., from PDF upload)
+          setQuiz(existingQuiz);
+          setTimeLeft(config.timeLimit * 60);
+          setAnswers(new Array(existingQuiz.questions.length).fill(-1));
+        } else {
+          // Generate new quiz
+          const quizData = await quizService.generateQuiz(config);
+          
+          // Save quiz to backend to get proper MongoDB _id
+          const savedQuiz = await quizService.saveQuizToBackend({
+            topic: quizData.topic,
+            questions: quizData.questions,
+            timeLimit: quizData.timeLimit,
+          });
+          
+          setQuiz(savedQuiz);
+          setTimeLeft(config.timeLimit * 60);
+          setAnswers(new Array(savedQuiz.questions.length).fill(-1));
+        }
       } catch (error) {
         console.error('Failed to load quiz:', error);
         navigate('/dashboard');
@@ -40,7 +57,7 @@ export const QuizInterface: React.FC = () => {
     };
 
     loadQuiz();
-  }, [config, navigate]);
+  }, [config, existingQuiz, navigate]);
 
   useEffect(() => {
     if (timeLeft > 0 && !submitting) {

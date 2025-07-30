@@ -271,6 +271,41 @@ Note: correctAnswer should be the index (0-3) of the correct option in the optio
     ];
   },
 
+  // Save quiz to backend
+  async saveQuizToBackend(quizData: {
+    topic: string;
+    questions: Question[];
+    timeLimit: number;
+  }): Promise<Quiz> {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await fetch(`${API_URL}/quiz`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(quizData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to save quiz to backend');
+    }
+
+    const savedQuiz = await response.json();
+    return {
+      id: savedQuiz._id, // Use MongoDB _id as id
+      topic: savedQuiz.topic,
+      questions: savedQuiz.questions,
+      timeLimit: savedQuiz.timeLimit,
+      createdAt: savedQuiz.createdAt,
+    };
+  },
+
   // New methods for quiz attempts and user statistics
   async saveQuizAttempt(attemptData: {
     quizId: string;

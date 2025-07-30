@@ -28,7 +28,12 @@ export const Header: React.FC = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User className="w-5 h-5 text-gray-600" />
-                <span className="text-gray-700">{user?.name}</span>
+                <button
+                  onClick={() => navigate('/user-dashboard')}
+                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium cursor-pointer"
+                >
+                  {user?.name}
+                </button>
               </div>
               <Button
                 variant="ghost"

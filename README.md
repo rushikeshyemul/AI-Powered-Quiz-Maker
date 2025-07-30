@@ -16,6 +16,7 @@ A comprehensive quiz application built with React, TypeScript, and Node.js that 
 - **Topic Coverage**: Track which subjects you've studied
 - **Progress Insights**: Best scores, improvement trends
 - **Recent Activity**: View your latest quiz attempts with detailed metrics
+- **User Dashboard**: Click on your username in the header to access your personal dashboard with quiz history and statistics
 
 ### 🎨 User Experience
 - **Modern UI**: Clean, responsive design with Tailwind CSS
@@ -109,8 +110,16 @@ A comprehensive quiz application built with React, TypeScript, and Node.js that 
 
 ### Tracking Progress
 1. **Dashboard**: View your overall statistics and recent activity
-2. **Test Records**: Access comprehensive history of all quiz attempts
-3. **Performance Insights**: Analyze your improvement over time
+2. **User Dashboard**: Click on your username in the header to access your personal dashboard
+3. **Test Records**: Access comprehensive history of all quiz attempts
+4. **Performance Insights**: Analyze your improvement over time
+
+### User Dashboard
+1. **Access**: Click on your username in the top-right corner of the header
+2. **Statistics Overview**: View total attempts, average score, questions answered, and total study time
+3. **Recent Performance**: See your last 5 quiz attempts with scores and difficulty levels
+4. **Complete History**: Browse all your quiz attempts in a detailed table format
+5. **Performance Analysis**: Track pass/fail status, time taken, and topic coverage
 
 ### PDF Upload
 1. Upload PDF files containing quiz questions
@@ -170,6 +179,77 @@ A comprehensive quiz application built with React, TypeScript, and Node.js that 
 - Score, time taken, answers
 - Difficulty and topic information
 - Completion timestamp
+
+## Troubleshooting
+
+### MongoDB Connection Issues
+If you encounter MongoDB connection errors:
+
+1. **Install MongoDB locally**:
+   ```bash
+   # On Windows (using Chocolatey)
+   choco install mongodb
+   
+   # On macOS (using Homebrew)
+   brew install mongodb-community
+   
+   # On Ubuntu/Debian
+   sudo apt-get install mongodb
+   ```
+
+2. **Start MongoDB service**:
+   ```bash
+   # Windows
+   net start MongoDB
+   
+   # macOS/Linux
+   sudo systemctl start mongod
+   ```
+
+3. **Alternative: Use MongoDB Atlas**:
+   - Create a free account at [MongoDB Atlas](https://www.mongodb.com/atlas)
+   - Create a cluster and get your connection string
+   - Update the `MONGO_URI` in your backend `.env` file
+
+4. **Test the connection**:
+   ```bash
+   cd backend
+   npm run test-data
+   ```
+
+### Frontend Issues
+- Clear browser cache and local storage
+- Check browser console for errors
+- Ensure both frontend and backend are running
+
+### Testing the Quiz Attempt Fix
+1. **Start the backend server**:
+   ```bash
+   cd backend
+   npm run dev
+   ```
+
+2. **Start the frontend**:
+   ```bash
+   npm run dev
+   ```
+
+3. **Test the backend API**:
+   ```bash
+   cd backend
+   npm run test-backend
+   ```
+
+4. **Take a quiz and check the dashboard**:
+   - Log in to the application
+   - Take a quiz
+   - Click on your username to access the user dashboard
+   - Check browser console for debugging information
+
+5. **If issues persist**:
+   - Check browser console for error messages
+   - Verify MongoDB is running: `mongod`
+   - Check backend console for connection errors
 
 ## Contributing
 

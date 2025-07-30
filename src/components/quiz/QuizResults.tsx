@@ -41,7 +41,8 @@ export const QuizResults: React.FC = () => {
     const saveQuizAttempt = async () => {
       try {
         setSaving(true);
-        await quizService.saveQuizAttempt({
+        console.log('Saving quiz attempt with quizId:', quiz.id);
+        const result = await quizService.saveQuizAttempt({
           quizId: quiz.id,
           topic: quiz.topic,
           answers,
@@ -50,6 +51,7 @@ export const QuizResults: React.FC = () => {
           timeTaken,
           difficulty,
         });
+        console.log('Quiz attempt saved successfully:', result);
       } catch (error) {
         console.error('Failed to save quiz attempt:', error);
         // Don't show error to user as this is background operation

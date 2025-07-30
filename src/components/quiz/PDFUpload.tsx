@@ -37,15 +37,23 @@ export const PDFUpload: React.FC = () => {
 
     try {
       const quiz = await quizService.uploadPDFQuiz(file);
+      
+      // Save quiz to backend to get proper MongoDB _id
+      const savedQuiz = await quizService.saveQuizToBackend({
+        topic: quiz.topic,
+        questions: quiz.questions,
+        timeLimit: quiz.timeLimit,
+      });
+      
       navigate('/quiz', { 
         state: { 
           config: {
-            topic: quiz.topic,
-            questionCount: quiz.questions.length,
-            timeLimit: quiz.timeLimit,
+            topic: savedQuiz.topic,
+            questionCount: savedQuiz.questions.length,
+            timeLimit: savedQuiz.timeLimit,
             difficulty: 'medium' as const,
           },
-          quiz,
+          quiz: savedQuiz,
         }
       });
     } catch (err) {

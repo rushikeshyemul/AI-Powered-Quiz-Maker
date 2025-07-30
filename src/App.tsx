@@ -9,6 +9,7 @@ import { QuizSetup } from './components/quiz/QuizSetup';
 import { QuizInterface } from './components/quiz/QuizInterface';
 import { QuizResults } from './components/quiz/QuizResults';
 import { PDFUpload } from './components/quiz/PDFUpload';
+import { UserDashboard } from './components/quiz/UserDashboard';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 
 function App() {
@@ -57,6 +58,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PDFUpload />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-dashboard"
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
                 </ProtectedRoute>
               }
             />
