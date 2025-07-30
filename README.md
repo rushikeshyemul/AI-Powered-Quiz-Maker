@@ -82,6 +82,22 @@ A comprehensive quiz application built with React, TypeScript, and Node.js that 
    - Get a free API key from [Together AI](https://together.ai)
    - Replace `your_together_api_key_here` with your actual API key for AI-powered quiz generation
 
+### Vite Proxy Configuration
+
+The project uses a Vite proxy to forward all `/api` requests from the frontend to the backend server during development.  
+**No changes are needed if you use the provided `vite.config.ts`.**  
+If you modify backend ports, update the `server.proxy` section in `vite.config.ts` accordingly:
+
+```js
+server: {
+  proxy: {
+    '/api': 'http://localhost:5000', // Change 5000 if your backend uses a different port
+  },
+},
+```
+
+**After changing the Vite config, always restart the frontend dev server.**
+
 5. **Start the backend server**
    ```bash
    cd backend
@@ -250,6 +266,15 @@ If you encounter MongoDB connection errors:
    - Check browser console for error messages
    - Verify MongoDB is running: `mongod`
    - Check backend console for connection errors
+
+#### MongoDB Atlas EREFUSED Error
+
+If you see an error like `MongoDB connection error: Error: querySrv EREFUSED ...`:
+
+- Make sure your internet connection is active.
+- Go to your MongoDB Atlas dashboard, and under **Network Access**, add your current IP address or use `0.0.0.0/0` for open access (less secure).
+- Double-check your connection string in the backend `.env` file.
+- Restart your backend server after making changes.
 
 ## Contributing
 
